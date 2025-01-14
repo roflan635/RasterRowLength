@@ -3,7 +3,43 @@
 
 #include "pch.h"
 #include "Task.h"
+#include <fstream>
 
+int GetRasterRowLength(int width, int bit)
+{
+	if (width < 0) return -1;		//ширина должна быть положительной
+	int length;  //переменная для длины строки растрового изображения
+	switch (bit)
+	{
+	case 1:
+		length = width / 8 + (width % 8 != 0); // вычисляем длину строки изображения в байтах
+		if (length % 4 != 0) // она должна быть кратна 4-м.
+			length = length / 4 * 4 + 4;
+		return length;
+		break;
+	case 4:				//4 бит на пиксель
+		length = width / 2 + (width % 2 != 0);
+		if (length % 4 != 0)
+			length = length / 4 * 4 + 4;
+		return length;
+		break;
+	case 8:				//8 бит на пиксель
+		length = width;
+		if (length % 4 != 0)
+			length = length / 4 * 4 + 4;
+		return length;
+		break;
+	case 24:			//24 бит на пиксель
+		length = width * 3;
+		if (length % 4 != 0) 
+			length = length / 4 * 4 + 4;
+		return length;
+		break;
+	default:
+		return -1;		//если кол-во бит на пиксель не равно 1, 4, 8, 24.
+		break;
+	}
+}
 /*
 	Реализуйте функцию, которая рассчитывает длину строки в байтах растрового изображения Windows bitmap. 
 	Как вы знаете, длина строки растрового изображения должна быть кратна 4 байтам и зависит от количества
